@@ -1,0 +1,29 @@
+{
+  "name": "hect2mml",
+  "version": "1.0.0",
+  "description": "Hector SPC to MML converter",
+  "main": "hect2mml.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tcdw/hect2mml.git"
+  },
+  "author": "tcdw",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tcdw/hect2mml/issues"
+  },
+  "homepage": "https://github.com/tcdw/hect2mml#readme",
+  "devDependencies": {
+    "eslint": "^5.15.3",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  },
+  "dependencies": {
+    "fs-extra": "^7.0.1",
+    "log4js": "^4.1.0",
+    "minimist": "^1.2.0"
+  }
+}

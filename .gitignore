@@ -1,3 +1,9 @@
+*.spc
+*.bak
+*.txt
+*.brr
+.vscode/
+
 # Logs
 logs
 *.log
