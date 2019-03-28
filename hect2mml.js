@@ -11,4 +11,4 @@ const samplePtr = typeof argv.sampleptr === 'undefined' ? 0x3000 : Number(argv.s
 const offset = 0x100;
 
 const spc = fs.readFileSync(argv._[0]);
-require('./lib/parser')(spc, offset, instPtr, trackPtr, samplePtr);
+require('./lib/parser')(spc, offset, argv.trace, instPtr, trackPtr, samplePtr);
