@@ -11,4 +11,7 @@ const samplePtr = typeof argv.sampleptr === 'undefined' ? 0x3000 : Number(argv.s
 const offset = 0x100;
 
 const spc = fs.readFileSync(argv._[0]);
-require('./lib/parser')(spc, offset, argv.trace, argv.printparsed, instPtr, trackPtr, samplePtr);
+const trackData = require('./lib/parser')(spc, offset, argv.trace, argv.printparsed, instPtr, trackPtr);
+const mml = require('./lib/conv_amk')(trackData);
+
+console.log(mml);
