@@ -2,6 +2,7 @@
 *.bak
 *.txt
 *.brr
+result-*
 .vscode/
 
 # Logs

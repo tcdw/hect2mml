@@ -2,7 +2,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const fs = require('fs-extra');
 
 if (argv._.length < 1 || argv.h || argv.help) {
-    console.log('usage: hect2mml.js [--instptr val] [--trackptr val] [--sampleptr val] [--trace log4js_level] spc_file');
+    console.log('usage: hect2mml.js [--instptr val] [--trackptr val] [--sampleptr val] [--trace log4js_level] [--printparsed] spc_file');
 }
 
 const instPtr = typeof argv.instptr === 'undefined' ? 0x2100 : Number(argv.instptr);
@@ -11,4 +11,4 @@ const samplePtr = typeof argv.sampleptr === 'undefined' ? 0x3000 : Number(argv.s
 const offset = 0x100;
 
 const spc = fs.readFileSync(argv._[0]);
-require('./lib/parser')(spc, offset, argv.trace, instPtr, trackPtr, samplePtr);
+require('./lib/parser')(spc, offset, argv.trace, argv.printparsed, instPtr, trackPtr, samplePtr);
