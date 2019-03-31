@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { trace8, pad } = require('./lib/hex_addr');
 
 if (argv._.length < 1 || argv.h || argv.help) {
-    console.log('usage: hect2mml.js [--instptr val] [--trackptr val] [--printparsed] [--amkfix] spc_file');
+    console.log('usage: hect2mml.js [--instptr val] [--trackptr val] [--samplepath path] [--printparsed] [--amkfix] spc_file');
     process.exit(1);
 }
 
@@ -22,7 +22,11 @@ const brrs = Object.entries(mml.brrChunks);
 const brrNames = [];
 
 let mmlStr = '';
-mmlStr += '#amk 2\n#samples\n{\n\t#optimized\n';
+mmlStr += '#amk 2\n';
+if (argv.samplepath) {
+    mmlStr += `#path "${argv.samplepath}"\n`;
+}
+mmlStr += '#samples\n{\n\t#optimized\n';
 brrs.forEach((e) => {
     const hash = crypto.createHash('sha256');
     hash.update(e[1]);
@@ -32,7 +36,7 @@ brrs.forEach((e) => {
     fs.writeFileSync(path.resolve(process.cwd(), 'output/samples', `${name}.brr`), e[1]);
 });
 
-mmlStr += '}\n\n#instruments\n{\n';
+mmlStr += '}\n#instruments\n{\n';
 mml.usedInst.forEach((e) => {
     const wantedPtr = instPtr + offset + e * 6;
     mmlStr += `\t"${brrNames[spc[wantedPtr]]}.brr"`;
@@ -41,7 +45,7 @@ mml.usedInst.forEach((e) => {
     }
     mmlStr += '\n';
 });
-mmlStr += '}\n\n#spc\n{';
+mmlStr += '}\n#spc\n{';
 let spcAuthor = spc.toString('utf8', 0xB1, 0xD1);
 let spcGame = spc.toString('utf8', 0x4E, 0x6E);
 let spcTitle = spc.toString('utf8', 0x2E, 0x4E);
@@ -60,6 +64,7 @@ mmlStr += `
 \t#comment   ""
 \t#title     "${spcTitle}"
 }
+
 `;
 
 for (let i = 0; i < mml.usedInst.length; i += 1) {
