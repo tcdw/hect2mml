@@ -41,7 +41,27 @@ mml.usedInst.forEach((e) => {
     }
     mmlStr += '\n';
 });
-mmlStr += '}\n';
+mmlStr += '}\n\n#spc\n{';
+let spcAuthor = spc.toString('utf8', 0xB1, 0xD1);
+let spcGame = spc.toString('utf8', 0x4E, 0x6E);
+let spcTitle = spc.toString('utf8', 0x2E, 0x4E);
+if (spcAuthor.indexOf('\0') >= 0) {
+    spcAuthor = spcAuthor.slice(0, spcAuthor.indexOf('\0'));
+}
+if (spcGame.indexOf('\0') >= 0) {
+    spcGame = spcGame.slice(0, spcGame.indexOf('\0'));
+}
+if (spcTitle.indexOf('\0') >= 0) {
+    spcTitle = spcTitle.slice(0, spcTitle.indexOf('\0'));
+}
+mmlStr += `
+\t#author    "${spcAuthor}"
+\t#game      "${spcGame} / SMW"
+\t#comment   ""
+\t#title     "${spcTitle}"
+}
+`;
+
 for (let i = 0; i < mml.usedInst.length; i += 1) {
     mmlStr += `"INSTX${pad(mml.usedInst[i].toString(16), 2)}=@${i + 30}"\n`;
 }
