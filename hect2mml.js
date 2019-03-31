@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { trace8, pad } = require('./lib/hex_addr');
 
 if (argv._.length < 1 || argv.h || argv.help) {
-    console.log('usage: hect2mml.js [--instptr val] [--trackptr val] [--samplepath path] [--printparsed] [--amkfix] spc_file');
+    console.log('usage: hect2mml.js spc_file [--instptr val] [--trackptr val] [--samplepath path] [--printparsed] [--amkfix] [--doubletick times]');
     process.exit(1);
 }
 
@@ -15,7 +15,7 @@ const offset = 0x100;
 
 const spc = fs.readFileSync(argv._[0]);
 const trackData = require('./lib/parser')(spc, offset, argv.printparsed, trackPtr);
-const mml = require('./lib/conv_amk')(spc, offset, trackData, instPtr, argv.amkfix);
+const mml = require('./lib/conv_amk')(spc, offset, trackData, instPtr, argv.amkfix, Math.floor(Number(argv.doubletick)));
 
 fs.mkdirpSync(path.resolve(process.cwd(), 'output/samples'));
 const brrs = Object.entries(mml.brrChunks);
