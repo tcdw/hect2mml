@@ -3,6 +3,7 @@
 *.txt
 *.brr
 result-*
+hgb-list.json
 .vscode/
 
 # Logs

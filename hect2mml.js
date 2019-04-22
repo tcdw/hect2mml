@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { trace8, pad } = require('./lib/hex_addr');
 
 if (argv._.length < 1 || argv.h || argv.help) {
-    console.log('usage: hect2mml.js spc_file [--instptr val] [--trackptr val] [--samplepath path] [--printparsed] [--amkfix] [--doubletick times]');
+    console.log('usage: hect2mml.js spc_file [--instptr val] [--trackptr val] [--samplepath path] [--printparsed] [--amkfix] [--doubletick times] [--brrnamemap map_file]');
     process.exit(1);
 }
 
@@ -14,6 +14,7 @@ const trackPtr = typeof argv.trackptr === 'undefined' ? 0x2200 : Number(argv.tra
 const offset = 0x100;
 
 const spc = fs.readFileSync(argv._[0]);
+const brrNameMap = argv.brrnamemap ? fs.readJSONSync(argv.brrnamemap, { encoding: 'utf8' }) : {};
 const trackData = require('./lib/parser')(spc, offset, argv.printparsed, trackPtr);
 const mml = require('./lib/conv_amk')(spc, offset, trackData, instPtr, argv.amkfix, Math.floor(Number(argv.doubletick)));
 
@@ -30,7 +31,8 @@ mmlStr += '#samples\n{\n\t#optimized\n';
 brrs.forEach((e) => {
     const hash = crypto.createHash('sha256');
     hash.update(e[1]);
-    const name = hash.digest('hex').slice(0, 16);
+    const brrChecksum = hash.digest('hex');
+    const name = typeof brrNameMap[brrChecksum] === 'undefined' ? `h_${brrChecksum}` : brrNameMap[brrChecksum];
     brrNames[e[0]] = name;
     mmlStr += `\t"${name}.brr"\n`;
     fs.writeFileSync(path.resolve(process.cwd(), 'output/samples', `${name}.brr`), e[1]);
