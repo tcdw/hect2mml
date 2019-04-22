@@ -13,6 +13,6 @@ const trackPtr = typeof argv.trackptr === 'undefined' ? 0x2200 : Number(argv.tra
 const spcPath = path.resolve(process.cwd(), argv._[0]);
 const spc = fs.readFileSync(spcPath);
 const brrNameMap = argv.brrnamemap ? fs.readJSONSync(argv.brrnamemap, { encoding: 'utf8' }) : {};
-const trackData = require('./lib/parser')(spc, offset, argv.printparsed, trackPtr);
-const mml = require('./lib/conv_amk')(spc, offset, trackData, instPtr, argv.amkfix, Math.floor(Number(argv.doubletick)));
+const { trackData, mentionedAddr } = require('./lib/parser')(spc, offset, argv.printparsed, trackPtr);
+const mml = require('./lib/conv_amk')(spc, offset, trackData, mentionedAddr, instPtr, argv.amkfix, Math.floor(Number(argv.doubletick)));
 require('./lib/finalize')(instPtr, trackPtr, spcPath, brrNameMap, mml, spc);
