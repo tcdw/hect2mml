@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { trace8, pad } = require('./lib/hex_addr');
 
 if (argv._.length < 1 || argv.h || argv.help) {
-    console.log('usage: hect2mml.js spc_file [--instptr val] [--trackptr val] [--samplepath path] [--printparsed] [--amkfix] [--doubletick times] [--brrnamemap map_file]');
+    console.log('usage: hect2mml.js spc_file [--instptr val] [--trackptr val] [--printparsed] [--amkfix] [--doubletick times] [--brrnamemap map_file]');
     process.exit(1);
 }
 
@@ -13,20 +13,20 @@ const instPtr = typeof argv.instptr === 'undefined' ? 0x2100 : Number(argv.instp
 const trackPtr = typeof argv.trackptr === 'undefined' ? 0x2200 : Number(argv.trackptr);
 const offset = 0x100;
 
-const spc = fs.readFileSync(argv._[0]);
+const spcPath = path.resolve(process.cwd(), argv._[0]);
+const spcName = path.parse(spcPath).name;
+const spc = fs.readFileSync(spcPath);
 const brrNameMap = argv.brrnamemap ? fs.readJSONSync(argv.brrnamemap, { encoding: 'utf8' }) : {};
 const trackData = require('./lib/parser')(spc, offset, argv.printparsed, trackPtr);
 const mml = require('./lib/conv_amk')(spc, offset, trackData, instPtr, argv.amkfix, Math.floor(Number(argv.doubletick)));
 
-fs.mkdirpSync(path.resolve(process.cwd(), 'output/samples'));
+fs.mkdirpSync(path.resolve(process.cwd(), `${spcName}/${spcName}`));
 const brrs = Object.entries(mml.brrChunks);
 const brrNames = [];
 
 let mmlStr = '';
 mmlStr += '#amk 2\n';
-if (argv.samplepath) {
-    mmlStr += `#path "${argv.samplepath}"\n`;
-}
+mmlStr += `#path "${spcName}"\n`;
 mmlStr += '#samples\n{\n\t#optimized\n';
 brrs.forEach((e) => {
     const hash = crypto.createHash('sha256');
@@ -35,7 +35,7 @@ brrs.forEach((e) => {
     const name = typeof brrNameMap[brrChecksum] === 'undefined' ? `h_${brrChecksum}` : brrNameMap[brrChecksum];
     brrNames[e[0]] = name;
     mmlStr += `\t"${name}.brr"\n`;
-    fs.writeFileSync(path.resolve(process.cwd(), 'output/samples', `${name}.brr`), e[1]);
+    fs.writeFileSync(path.resolve(process.cwd(), `${spcName}/${spcName}`, `${name}.brr`), e[1]);
 });
 
 mmlStr += '}\n#instruments\n{\n';
@@ -75,4 +75,4 @@ for (let i = 0; i < mml.usedInst.length; i += 1) {
 
 mmlStr += mml.mml;
 
-fs.writeFileSync(path.resolve(process.cwd(), 'output', 'song.txt'), mmlStr);
+fs.writeFileSync(path.resolve(process.cwd(), spcName, `${spcGame} - ${spcTitle}.txt`), mmlStr);
